@@ -1,0 +1,11 @@
+{{- $s := partial "sassy-settings.html" . }}
+<footer class="site-footer">
+  <div class="wrap site-footer-inner">
+    <p>{{ partial "logo.html" "small" }}{{ with $s.since }} · since {{ . }}{{ end }}</p>
+    <p>
+      Hosted on <a href="https://micro.blog">Micro.blog</a>
+      · <a href="{{ "archive/" | relURL }}">Archive</a>
+      · <a href="{{ "feed.xml" | absURL }}">RSS</a>
+    </p>
+  </div>
+</footer>

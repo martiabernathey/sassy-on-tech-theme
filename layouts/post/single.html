@@ -1,0 +1,56 @@
+{{ define "main" }}
+{{- $s := partial "sassy-settings.html" . -}}
+<div class="with-sidebar">
+  <article class="post h-entry">
+    <header class="post-header">
+      {{- with .GetTerms "categories" }}
+      <p class="post-tags">
+        {{- range . }}
+          {{- if ne (lower .LinkTitle) (lower $s.featured_category) }}<a class="tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+        {{- end }}
+      </p>
+      {{- end }}
+      {{- with .Title }}<h1 class="post-title p-name">{{ . }}</h1>{{ end }}
+      <p class="post-meta">
+        <a class="u-url" href="{{ .Permalink }}"><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date.Format "2 January 2006" }}</time></a>
+        {{- if .Title }} · {{ .ReadingTime }} min read{{ end }}
+      </p>
+    </header>
+
+    {{- with .Params.audio }}
+    <script type="text/javascript" src="https://micro.blog/narration.js?url={{ . }}"></script>
+    {{- end }}
+
+    <div class="post-content e-content">
+      {{ .Content }}
+    </div>
+
+    {{- if or (templates.Exists "partials/reply-by-email.html") (templates.Exists "partials/conversation-link.html") (templates.Exists "partials/reply-on-mastodon.html") }}
+    <div class="post-replies">
+      {{- if templates.Exists "partials/conversation-link.html" }}{{ partial "conversation-link.html" . }}{{ end }}
+      {{- if templates.Exists "partials/reply-on-mastodon.html" }}{{ partial "reply-on-mastodon.html" . }}{{ end }}
+      {{- if templates.Exists "partials/reply-by-email.html" }}{{ partial "reply-by-email.html" . }}{{ end }}
+    </div>
+    {{- end }}
+
+    {{- if .Site.Params.include_conversation }}
+    <div class="post-conversation">
+      <script type="text/javascript" src="https://micro.blog/conversation.js?url={{ .Permalink }}"></script>
+    </div>
+    {{- end }}
+
+    {{- /* Older / newer links across the whole blog (Micro.blog sections are per year) */ -}}
+    {{- $posts := (where .Site.RegularPages "Type" "post").ByDate.Reverse }}
+    {{- /* Hugo's Pages.Next/Prev step toward the start/end of the list: newest-first, so Prev = older */ -}}
+    {{- $older := $posts.Prev . }}
+    {{- $newer := $posts.Next . }}
+    {{- if or $older $newer }}
+    <nav class="post-nav" aria-label="Older and newer posts">
+      {{- with $newer }}<a href="{{ .RelPermalink }}"><span class="lime">← Newer</span>{{ with .Title }}<span>{{ . }}</span>{{ end }}</a>{{ else }}<span></span>{{ end }}
+      {{- with $older }}<a class="older" href="{{ .RelPermalink }}"><span class="lime">Older →</span>{{ with .Title }}<span>{{ . }}</span>{{ end }}</a>{{ end }}
+    </nav>
+    {{- end }}
+  </article>
+  {{ partial "sidebar.html" . }}
+</div>
+{{ end }}

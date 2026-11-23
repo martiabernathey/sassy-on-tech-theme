@@ -1,0 +1,5 @@
+{{- /* The Sassy ~/on/tech wordmark. Pass "small" as the context for the footer size. */ -}}
+<span class="logo{{ if eq . "small" }} logo--small{{ end }}" aria-label="Sassy on tech">
+  <span class="logo-script" aria-hidden="true"><span class="logo-s">S</span>assy</span>
+  <span class="logo-path" aria-hidden="true">~/on/tech{{ if ne . "small" }}<span class="cursor"></span>{{ end }}</span>
+</span>

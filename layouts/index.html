@@ -1,0 +1,67 @@
+{{ define "main" }}
+{{- $s := partial "sassy-settings.html" . -}}
+{{- $all := (where (where .Site.RegularPages "Type" "post") "Title" "!=" "").ByDate.Reverse -}}
+{{- $featured := where $all "Params.categories" "intersect" (slice $s.featured_category) -}}
+
+{{- /* Hero = up to 3 featured posts, topped up with the newest posts */ -}}
+{{- $hero := first 3 (union $featured $all) -}}
+{{- $rest := complement $hero $all -}}
+{{- $bench := first 3 $rest -}}
+{{- $gridPosts := after 3 $rest -}}
+{{- $paginator := .Paginate $gridPosts (int $s.home_per_page) -}}
+
+{{- if eq $paginator.PageNumber 1 }}
+  {{- if $hero }}
+  <section class="hero">
+    {{- with $s.hero_headline }}
+    <h1 class="hero-headline">{{ . }} {{ with $s.hero_highlight }}<span class="pink">{{ . }}</span>{{ end }}</h1>
+    {{- end }}
+    <div class="hero-grid">
+      <div class="hero-main">
+        {{ partial "card.html" (dict "page" (index $hero 0) "style" "hero") }}
+      </div>
+      {{- if gt (len $hero) 1 }}
+      <div class="hero-side">
+        {{- range after 1 $hero }}
+        {{ partial "card.html" (dict "page" . "style" "side") }}
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  {{- if $bench }}
+  <section class="section">
+    <div class="section-head">
+      <h2>Fresh off the bench</h2>
+      <a class="lime" href="{{ "archive/" | relURL }}">See all →</a>
+    </div>
+    <div class="row-grid">
+      {{- range $bench }}
+      {{ partial "card.html" (dict "page" . "style" "row") }}
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+{{- end }}
+
+<section class="section with-sidebar">
+  <div class="content-col">
+    <div class="section-head">
+      <h2>{{ if eq $paginator.PageNumber 1 }}Latest posts{{ else }}More posts{{ end }}</h2>
+    </div>
+    {{- if $paginator.Pages }}
+    <div class="card-grid h-feed">
+      {{- range $paginator.Pages }}
+      {{ partial "card.html" (dict "page" . "style" "grid") }}
+      {{- end }}
+    </div>
+    {{- partial "pagination.html" $paginator }}
+    {{- else if not $all }}
+    <p class="muted">No posts yet. Watch this space.</p>
+    {{- end }}
+  </div>
+  {{ partial "sidebar.html" . }}
+</section>
+{{ end }}

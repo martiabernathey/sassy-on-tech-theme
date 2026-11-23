@@ -1,0 +1,11 @@
+{{- /* Returns the first image URL for a post: photos param, image param, then first <img> in the content. "" if none. */ -}}
+{{- $img := "" -}}
+{{- with .Params.photos }}{{ $img = index . 0 }}{{ end -}}
+{{- if not $img }}{{ with .Params.image }}{{ $img = . }}{{ end }}{{ end -}}
+{{- if not $img -}}
+  {{- $found := findRE `<img[^>]+src=["'][^"']+["']` (string .Content) 1 -}}
+  {{- with $found -}}
+    {{- $img = replaceRE `^.*src=["']([^"']+)["'].*$` "$1" (index . 0) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $img -}}

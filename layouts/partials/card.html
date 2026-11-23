@@ -1,0 +1,43 @@
+{{- /*
+  Post card. Call with: (dict "page" . "style" "hero|side|row|grid")
+*/ -}}
+{{- $p := .page -}}
+{{- $style := .style | default "grid" -}}
+{{- $s := partial "sassy-settings.html" $p -}}
+{{- $img := partial "post-image.html" $p -}}
+{{- $title := $p.Title -}}
+{{- if not $title }}{{ $title = $p.Summary | plainify | htmlUnescape | truncate 80 }}{{ end -}}
+
+{{- /* Label = first category that isn't the featured one */ -}}
+{{- $label := "" -}}{{- $labelURL := "" -}}
+{{- with $p.GetTerms "categories" -}}
+  {{- range . -}}
+    {{- if and (not $label) (ne (lower .LinkTitle) (lower $s.featured_category)) -}}
+      {{- $label = .LinkTitle -}}{{- $labelURL = .RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<article class="card card--{{ $style }} h-entry{{ if not $img }} card--noimg{{ end }}">
+  {{- if $img }}
+  <a class="card-media" href="{{ $p.RelPermalink }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ $img }}" alt="" loading="lazy">
+  </a>
+  {{- else if eq $style "hero" }}
+  <a class="card-media card-media--blank" href="{{ $p.RelPermalink }}" tabindex="-1" aria-hidden="true"><span>S</span></a>
+  {{- end }}
+  <div class="card-body">
+    {{- with $label }}
+    <a class="tag" href="{{ $labelURL }}">{{ . }}</a>
+    {{- end }}
+    {{- if eq $style "hero" }}
+    <h2 class="card-title p-name"><a class="u-url" href="{{ $p.RelPermalink }}">{{ $title }}</a></h2>
+    <p class="card-excerpt p-summary">{{ $p.Summary | plainify | htmlUnescape | truncate 220 }}</p>
+    {{- else }}
+    <h3 class="card-title p-name"><a class="u-url" href="{{ $p.RelPermalink }}">{{ $title }}</a></h3>
+    {{- end }}
+    {{- if ne $style "row" }}
+    <p class="card-meta"><time class="dt-published" datetime="{{ $p.Date.Format "2006-01-02T15:04:05-07:00" }}">{{ $p.Date.Format "2 Jan 2006" }}</time></p>
+    {{- end }}
+  </div>
+</article>

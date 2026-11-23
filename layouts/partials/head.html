@@ -1,0 +1,28 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ else if .Title }}{{ .Title | plainify | htmlUnescape }} · {{ .Site.Title }}{{ else }}{{ .Summary | plainify | htmlUnescape | truncate 60 }} · {{ .Site.Title }}{{ end }}</title>
+  {{- $desc := "" }}
+  {{- if .IsHome }}{{ $desc = .Site.Params.about_me | default .Site.Params.description }}{{ else }}{{ $desc = .Summary }}{{ end }}
+  <meta name="description" content="{{ $desc | plainify | htmlUnescape | truncate 160 }}">
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title | default .Site.Title | plainify | htmlUnescape }}{{ end }}">
+  <meta property="og:description" content="{{ $desc | plainify | htmlUnescape | truncate 160 }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  {{- if not .IsHome }}
+  {{- $img := partial "post-image.html" . }}
+  {{- with $img }}
+  <meta property="og:image" content="{{ . }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {{- end }}
+  {{- end }}
+  <meta name="theme-color" content="#0E1016">
+  <link rel="canonical" href="{{ .Permalink }}">
+
+  {{- /* Fonts from Bunny Fonts (EU-hosted, no tracking) */}}
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=yellowtail:400|space-grotesk:500,700|inter:400,400i,500,600,700|jetbrains-mono:500,700&display=swap">
+
+  <link rel="stylesheet" href="{{ "css/sassy.css" | relURL }}?{{ .Site.Params.theme_seconds }}">
+  {{ partial "microblog_head.html" . }}
+</head>

@@ -1,0 +1,35 @@
+{{- $s := partial "sassy-settings.html" . }}
+<aside class="sidebar">
+  <section class="box about">
+    {{- with .Site.Params.author.avatar }}
+    <img class="avatar" src="{{ . }}" alt="" width="72" height="72">
+    {{- end }}
+    {{- with $s.about_title }}<h2>{{ . }}</h2>{{ end }}
+    {{- with $s.about_text }}<p>{{ . }}</p>{{ end }}
+    {{- with $s.about_link }}<a class="more" href="{{ . }}">More about me →</a>{{ end }}
+  </section>
+
+  {{- with .Site.Taxonomies.categories }}
+  <section class="box">
+    <h2>Topics</h2>
+    <ul class="pills">
+      {{- range .ByCount }}
+        {{- if ne (lower .Page.Title) (lower $s.featured_category) }}
+        <li><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a></li>
+        {{- end }}
+      {{- end }}
+    </ul>
+  </section>
+  {{- end }}
+
+  <section class="box box--pink">
+    <h2>Follow along</h2>
+    <p>New posts, no algorithm.</p>
+    <ul class="pills pills--dark">
+      <li><a href="{{ "feed.xml" | absURL }}">RSS</a></li>
+      {{- with $s.mastodon_url }}<li><a href="{{ . }}" rel="me">Mastodon</a></li>{{ end }}
+      <li><a href="https://micro.blog/{{ .Site.Params.author.username }}">Micro.blog</a></li>
+      {{- with $s.email }}<li><a href="mailto:{{ . }}">Email</a></li>{{ end }}
+    </ul>
+  </section>
+</aside>

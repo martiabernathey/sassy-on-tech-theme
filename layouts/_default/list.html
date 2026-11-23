@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="section with-sidebar">
+  <div class="content-col">
+    <header class="list-header">
+      <p class="tag">Topic</p>
+      <h1 class="post-title">{{ .Title }}</h1>
+      {{- with .Content }}<div class="list-intro">{{ . }}</div>{{ end }}
+    </header>
+    {{- $paginator := .Paginate (where .Pages "Type" "post").ByDate.Reverse 12 }}
+    <div class="card-grid h-feed">
+      {{- range $paginator.Pages }}
+      {{ partial "card.html" (dict "page" . "style" "grid") }}
+      {{- end }}
+    </div>
+    {{- partial "pagination.html" $paginator }}
+  </div>
+  {{ partial "sidebar.html" . }}
+</div>
+{{ end }}

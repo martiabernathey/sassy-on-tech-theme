@@ -1,0 +1,8 @@
+{{ define "main" }}
+<article class="page h-entry">
+  {{- with .Title }}<h1 class="post-title p-name">{{ . }}</h1>{{ end }}
+  <div class="post-content e-content">
+    {{ .Content }}
+  </div>
+</article>
+{{ end }}

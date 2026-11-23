@@ -1,0 +1,21 @@
+{{- $page := . }}
+<header class="site-header">
+  <div class="wrap site-header-inner">
+    <a class="logo-link" href="{{ "/" | relURL }}">{{ partial "logo.html" "large" }}</a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        {{- range .Site.Menus.main }}
+          {{- $current := or ($page.IsMenuCurrent "main" .) ($page.HasMenuCurrent "main" .) }}
+          {{- $redirect := "" }}
+          {{- with .Page }}{{ $redirect = .Params.redirect_url }}{{ end }}
+          {{- if $redirect }}
+          <li><a href="{{ $redirect }}">{{ .Name | safeHTML }}</a></li>
+          {{- else }}
+          <li><a href="{{ .URL | relURL }}"{{ if $current }} aria-current="page"{{ end }}>{{ .Name | safeHTML }}</a></li>
+          {{- end }}
+        {{- end }}
+      </ul>
+    </nav>
+    <a class="btn btn-pink" href="{{ "feed.xml" | absURL }}">Follow via RSS</a>
+  </div>
+</header>
